@@ -1,0 +1,14 @@
+1、服务器返回客户端的数据格式：
+
+成功的时候，返回数据包含code data message，data如果为空的话，就返回一个空即可。
+如果查询的是单个对象，data里面就返回一个空的对象即可。
+如果查询的是列表，data里面就返回一个空的数组即可。
+
+失败的时候，返回数据包含code message，不包含data。
+
+2、code message data 都放在controller中进行处理，afterCompletion用来处理对返回的数据进行加密，还有对返回的数据是否为空，以及其他情况
+进行数据的校验。
+
+3、返回的如果是列表的话，data里面的数据格式为JSONArray。返回的如果单个对象的话，data里面的数据格式为JSONObject。
+
+4、
