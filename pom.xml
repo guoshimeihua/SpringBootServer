@@ -18,6 +18,15 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+	<!-- 阿里云maven镜像地址 -->
+	<repositories>
+		<repository>
+			<id>maven-snapshots</id>
+			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
+	</repositories>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -46,6 +55,25 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>1.1.41</version>
+		</dependency>
+
+		<!-- Mybatis集成 -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.30</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid-spring-boot-starter</artifactId>
+			<version>1.1.4</version>
 		</dependency>
 	</dependencies>
 
