@@ -11,6 +11,15 @@ public class Dept implements Serializable {
     private String departName;
     private String remark;
 
+    public Dept(String departName, String remark) {
+        this.departName = departName;
+        this.remark = remark;
+    }
+
+    public Dept() {
+
+    }
+
     public Integer getId() {
         return id;
     }
