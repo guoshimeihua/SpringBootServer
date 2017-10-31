@@ -3,9 +3,9 @@ package com.dodonew.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.dodonew.util.common.BootConstants;
 import com.dodonew.util.security.AESUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -27,8 +27,6 @@ public class RequestHandler {
 
     public JSONObject getJSON() {
         String method = request.getMethod();
-        System.out.println("method GET ==== " + RequestMethod.GET);
-        System.out.println("method POST ==== " + RequestMethod.DELETE);
         Boolean isGet = "GET".equals(method) || "DELETE".equals(method);
         JSONObject jsonObject = null;
         if (isGet) {
@@ -45,18 +43,26 @@ public class RequestHandler {
     }
 
     private JSONObject getGETJSONObject() {
-        String queryString = request.getQueryString();
-        String[] queryArray = queryString.split("=");
         JSONObject desJson = null;
-        if (queryArray.length == 2) {
-            String encryptStr = queryArray[1];
-            try {
-                encryptStr = URLDecoder.decode(encryptStr, "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        String queryString = request.getQueryString();
+        if (StringUtils.isEmpty(queryString)) {
+            String encryptStr = request.getParameter("Encrypt");
+            // 以params方式传递过来的参数，就不需要进行URLDecoder了。
             String desStr = AESUtil.decrypt(encryptStr, BootConstants.AES_KEY, BootConstants.AES_IV);
             desJson = JSONObject.parseObject(desStr);
+        } else {
+            String[] queryArray = queryString.split("=");
+            if (queryArray.length == 2) {
+                String encryptStr = queryArray[1];
+                // app端GET传输的话，会自动进行URLEncoder编码。所以在后端测试的时候，也要添加一次编码。
+                try {
+                    encryptStr = URLDecoder.decode(encryptStr, "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String desStr = AESUtil.decrypt(encryptStr, BootConstants.AES_KEY, BootConstants.AES_IV);
+                desJson = JSONObject.parseObject(desStr);
+            }
         }
         return desJson;
     }
@@ -64,8 +70,15 @@ public class RequestHandler {
     private JSONObject getJSONObject(String data) {
         JSONObject json = new JSONObject();
         JSONObject desJson = new JSONObject();
-        json = JSONObject.parseObject(data);
-        String desStr = AESUtil.decrypt(json.getString("Encrypt"), BootConstants.AES_KEY, BootConstants.AES_IV);
+        String desStr = null;
+        if (data.contains("Encrypt")) {
+            // 针对非parameters的处理
+            json = JSONObject.parseObject(data);
+            desStr = AESUtil.decrypt(json.getString("Encrypt"), BootConstants.AES_KEY, BootConstants.AES_IV);
+        } else {
+            // 针对parameters的处理
+            desStr = AESUtil.decrypt(data, BootConstants.AES_KEY, BootConstants.AES_IV);
+        }
         desJson = JSONObject.parseObject(desStr);
         return desJson;
     }
@@ -80,6 +93,10 @@ public class RequestHandler {
             //System.out.println("readLine === "+bufferedReader.readLine());
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
+            }
+            if (StringUtils.isEmpty(stringBuffer.toString())) {
+                String encryptStr = request.getParameter("Encrypt");
+                stringBuffer.append(encryptStr);
             }
         } catch (IOException e) {
             e.printStackTrace();

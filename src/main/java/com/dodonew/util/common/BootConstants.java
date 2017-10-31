@@ -14,4 +14,6 @@ public class BootConstants {
 
     public static final String REQUESTDATA = "requestData";
     public static final String REQUESTAFTERDATA = "requestAfterData";
+
+    public static final String LOCAL_HOST = "http://localhost:8080";
 }

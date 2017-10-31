@@ -8,6 +8,7 @@ import com.dodonew.domain.Dept;
 import com.dodonew.service.DeptService;
 import com.dodonew.util.common.BootConstants;
 import com.dodonew.util.common.StatusCode;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,9 @@ public class DeptController {
 
             String pageIndex = requestJson.getString("pageIndex");
             String pageSize = requestJson.getString("pageSize");
-
+            if (StringUtils.isEmpty(pageSize)) {
+                pageSize = "10";
+            }
             List<Dept> deptList = deptService.findDeptList(Integer.parseInt(pageIndex), Integer.parseInt(pageSize));
             resultJson.put(BootConstants.CODE_KEY, StatusCode.SUCCESS);
             resultJson.put(BootConstants.MESSAGE_KEY, "请求成功");
