@@ -18,13 +18,14 @@ public interface JobDao {
     List<Job> selectAllJob();
 
     @Delete("delete from " + HrmConstants.JOBTABLE + " where id = #{id}")
-    void deleteJob(Integer id);
+    Integer deleteJob(Integer id);
 
     @InsertProvider(type = JobDynaSqlProvider.class, method = "insertJob")
-    void save(Job job);
+    @SelectKey(statement = "SELECT LAST_INSERT_ID() AS id", keyProperty = "id", keyColumn = "id", before = false, resultType = Integer.class)
+    Integer save(Job job);
 
     @UpdateProvider(type = JobDynaSqlProvider.class, method = "updateJob")
-    void update(Job job);
+    Integer update(Job job);
 
     @SelectProvider(type = JobDynaSqlProvider.class, method = "count")
     Integer count(Map<String, Object> params);

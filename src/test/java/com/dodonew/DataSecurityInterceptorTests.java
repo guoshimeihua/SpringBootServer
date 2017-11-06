@@ -1,6 +1,7 @@
 package com.dodonew;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dodonew.util.common.BootConstants;
 import com.dodonew.util.security.AESUtil;
 import com.dodonew.util.security.MD5Util;
@@ -45,7 +46,7 @@ public class DataSecurityInterceptorTests {
         System.out.println("sign : " + sign);
         sortedMap.put("sign", sign);
 
-        String mapStr = JSON.toJSONString(sortedMap);
+        String mapStr = JSON.toJSONString(sortedMap, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
         String encryptStr = AESUtil.encrypt(mapStr, BootConstants.AES_KEY, BootConstants.AES_IV);
 
         try {
@@ -77,7 +78,7 @@ public class DataSecurityInterceptorTests {
         System.out.println("sign : " + sign);
         sortedMap.put("sign", sign);
 
-        String mapStr = JSON.toJSONString(sortedMap);
+        String mapStr = JSON.toJSONString(sortedMap, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
         String encryptStr = AESUtil.encrypt(mapStr, BootConstants.AES_KEY, BootConstants.AES_IV);
 
         try {
@@ -108,7 +109,7 @@ public class DataSecurityInterceptorTests {
         System.out.println("sign : " + sign);
         sortedMap.put("sign", sign);
 
-        String mapStr = JSON.toJSONString(sortedMap);
+        String mapStr = JSON.toJSONString(sortedMap, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
         String encryptStr = AESUtil.encrypt(mapStr, BootConstants.AES_KEY, BootConstants.AES_IV);
 
         try {

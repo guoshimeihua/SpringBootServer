@@ -2,6 +2,7 @@ package com.dodonew.dao;
 
 import com.dodonew.domain.Employee;
 import com.dodonew.util.common.HrmConstants;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.Map;
@@ -91,6 +92,11 @@ public class EmployeeDynaSqlProvider {
                 }
                 if (employee.getPostCode() != null) {
                     VALUES("post_code", "#{postCode}");
+                }
+                if (StringUtils.isBlank(employee.getTel())) {
+                    System.out.println("是null符串");
+                } else {
+                    System.out.println("是空字符串");
                 }
                 if (employee.getTel() != null) {
                     VALUES("tel", "#{tel}");

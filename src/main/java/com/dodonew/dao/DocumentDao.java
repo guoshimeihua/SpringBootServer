@@ -19,7 +19,7 @@ public interface DocumentDao {
             @Result(column = "filename", property = "fileName"),
             @Result(column = "remark", property = "remark"),
             @Result(column = "createdate", property = "createDate"),
-            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.hrm.dao.UserDao.selectById", fetchType = FetchType.EAGER))
+            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.dao.UserDao.selectById", fetchType = FetchType.EAGER))
     })
     List<Document> selectByPage(Map<String, Object> params);
 
@@ -30,7 +30,7 @@ public interface DocumentDao {
             @Result(column = "filename", property = "fileName"),
             @Result(column = "remark", property = "remark"),
             @Result(column = "createdate", property = "createDate"),
-            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.hrm.dao.UserDao.selectById", fetchType = FetchType.EAGER))
+            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.dao.UserDao.selectById", fetchType = FetchType.EAGER))
     })
     Document selectById(Integer id);
 
@@ -38,11 +38,12 @@ public interface DocumentDao {
     Integer count(Map<String, Object> params);
 
     @InsertProvider(type = DocumentDynaSqlProvider.class, method = "insertDocument")
-    void save(Document document);
+    @SelectKey(statement = "SELECT LAST_INSERT_ID() AS id", keyProperty = "id", keyColumn = "id", before = false, resultType = Integer.class)
+    Integer save(Document document);
 
     @UpdateProvider(type = DocumentDynaSqlProvider.class, method = "updateDocument")
-    void update(Document document);
+    Integer update(Document document);
 
     @Delete("delete from "+ HrmConstants.DOCUMENTTABLE + " where id = #{id}")
-    void deleteById(Integer id);
+    Integer deleteById(Integer id);
 }

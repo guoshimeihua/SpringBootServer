@@ -29,18 +29,46 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public void addDept(Dept dept) {
-        deptDao.save(dept);
+    public boolean addDept(Dept dept) {
+        boolean isSuccess = false;
+        try {
+            // 这里row永远是返回受影响的行数
+            int row = deptDao.save(dept);
+            if (row > 0) {
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            isSuccess = false;
+        }
+        return isSuccess;
     }
 
     @Override
-    public void removeDept(Integer id) {
-        deptDao.deleteById(id);
+    public boolean removeDept(Integer id) {
+        boolean isSucces = false;
+        try {
+            Integer row = deptDao.deleteById(id);
+            if (row > 0) {
+                isSucces = true;
+            }
+        } catch (Exception e) {
+            isSucces = false;
+        }
+        return isSucces;
     }
 
     @Override
-    public void modifyDept(Dept dept) {
-        deptDao.update(dept);
+    public boolean modifyDept(Dept dept) {
+        boolean isSuccess = false;
+        try {
+            int row = deptDao.update(dept);
+            if (row > 0) {
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            isSuccess = false;
+        }
+        return isSuccess;
     }
 
     @Override

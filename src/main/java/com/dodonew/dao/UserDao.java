@@ -16,9 +16,6 @@ public interface UserDao {
      * 查询SQL语句的时候，之间一定要留足空格，否则的话，SQL语句是不正确的。
      * 在写SQL语句的时候，这个是重点。
      */
-    @Select("select * from "+ HrmConstants.USERTABLE + " where loginname = #{loginname} and password = #{password}")
-    User selectByLoginNameAndPassword(@Param("loginname") String loginName, @Param("password") String password);
-
     // 根据id查询用户
     @Select("select * from " + HrmConstants.USERTABLE + " where id = #{id}")
     User selectById(Integer id);
@@ -30,11 +27,11 @@ public interface UserDao {
      * @param id
      */
     @Delete("delete from " + HrmConstants.USERTABLE + " where id = #{id}")
-    void deleteById(Integer id);
+    Integer deleteById(Integer id);
 
     // 动态修改用户
     @UpdateProvider(type = UserDynaSqlProvider.class, method = "updateUser")
-    void update(User user);
+    Integer update(User user);
 
     // 分页动态查询
     @SelectProvider(type = UserDynaSqlProvider.class, method = "selectWithParams")
@@ -46,5 +43,6 @@ public interface UserDao {
 
     // 动态插入用户
     @InsertProvider(type = UserDynaSqlProvider.class, method = "insertUser")
-    void save(User user);
+    @SelectKey(statement = "SELECT LAST_INSERT_ID() AS id", keyProperty = "id", keyColumn = "id", before = false, resultType = Integer.class)
+    Integer save(User user);
 }

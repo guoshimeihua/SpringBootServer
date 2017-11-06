@@ -33,8 +33,8 @@ public interface EmployeeDao {
             @Result(column = "hobby", property = "hobby"),
             @Result(column = "remark", property = "remark"),
             @Result(column = "createdate", property = "createdate", javaType = Date.class),
-            @Result(column = "dept_id", property = "dept", one = @One(select = "com.dodonew.hrm.dao.DeptDao.selectById", fetchType = FetchType.EAGER)),
-            @Result(column = "job_id", property = "job", one = @One(select = "com.dodonew.hrm.dao.JobDao.selectById", fetchType = FetchType.EAGER))
+            @Result(column = "dept_id", property = "dept", one = @One(select = "com.dodonew.dao.DeptDao.selectById", fetchType = FetchType.EAGER)),
+            @Result(column = "job_id", property = "job", one = @One(select = "com.dodonew.dao.JobDao.selectById", fetchType = FetchType.EAGER))
     })
     Employee selectById(Integer id);
 
@@ -58,8 +58,8 @@ public interface EmployeeDao {
             @Result(column = "hobby", property = "hobby"),
             @Result(column = "remark", property = "remark"),
             @Result(column = "createdate", property = "createdate", javaType = Date.class),
-            @Result(column = "dept_id", property = "dept", one = @One(select = "com.dodonew.hrm.dao.DeptDao.selectById", fetchType = FetchType.EAGER)),
-            @Result(column = "job_id", property = "job", one = @One(select = "com.dodonew.hrm.dao.JobDao.selectById", fetchType = FetchType.EAGER))
+            @Result(column = "dept_id", property = "dept", one = @One(select = "com.dodonew.dao.DeptDao.selectById", fetchType = FetchType.EAGER)),
+            @Result(column = "job_id", property = "job", one = @One(select = "com.dodonew.dao.JobDao.selectById", fetchType = FetchType.EAGER))
     })
     List<Employee> selectByPage(Map<String, Object> params);
 
@@ -67,11 +67,12 @@ public interface EmployeeDao {
     Integer count(Map<String, Object> params);
 
     @InsertProvider(type = EmployeeDynaSqlProvider.class, method = "insert")
-    void save(Employee employee);
+    @SelectKey(statement = "SELECT LAST_INSERT_ID() AS id", keyProperty = "id", keyColumn = "id", before = false, resultType = Integer.class)
+    Integer save(Employee employee);
 
     @Delete("delete from " + HrmConstants.EMPLOYEETABLE + " where id = #{id}")
-    void deleteById(Integer id);
+    Integer deleteById(Integer id);
 
     @UpdateProvider(type = EmployeeDynaSqlProvider.class, method = "update")
-    void update(Employee employee);
+    Integer update(Employee employee);
 }

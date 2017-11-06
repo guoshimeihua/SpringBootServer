@@ -2,6 +2,7 @@ package com.dodonew;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dodonew.domain.Dept;
 import com.dodonew.service.DeptService;
 import com.dodonew.util.common.BootConstants;
@@ -81,7 +82,7 @@ public class DeptControllerTests {
         System.out.println("sign : " + sign);
         sortedMap.put("sign", sign);
 
-        String mapStr = JSON.toJSONString(sortedMap);
+        String mapStr = JSON.toJSONString(sortedMap, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
         String encryptStr = AESUtil.encrypt(mapStr, BootConstants.AES_KEY, BootConstants.AES_IV);
 
         // 直接在URL后面拼接和以param传递的方式，两种都给添加上去了。
@@ -116,7 +117,7 @@ public class DeptControllerTests {
         System.out.println("sign : " + sign);
         sortedMap.put("sign", sign);
 
-        String mapStr = JSON.toJSONString(sortedMap);
+        String mapStr = JSON.toJSONString(sortedMap, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
         String encryptStr = AESUtil.encrypt(mapStr, BootConstants.AES_KEY, BootConstants.AES_IV);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/hrm/api/depts")

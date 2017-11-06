@@ -12,9 +12,9 @@ public interface DeptService {
 
     public Dept findDept(Integer id);
 
-    public void addDept(Dept dept);
+    public boolean addDept(Dept dept);
 
-    public void removeDept(Integer id);
+    public boolean removeDept(Integer id);
 
-    public void modifyDept(Dept dept);
+    public boolean modifyDept(Dept dept);
 }

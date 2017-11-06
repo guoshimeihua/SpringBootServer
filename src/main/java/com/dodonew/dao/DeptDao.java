@@ -31,7 +31,7 @@ public interface DeptDao {
      * @param id 部门id
      */
     @Delete("delete from " + HrmConstants.DEPTTABLE + " where id = #{id}")
-    void deleteById(Integer id);
+    Integer deleteById(Integer id);
 
     /**
      * 查询总数量
@@ -52,14 +52,17 @@ public interface DeptDao {
     /**
      * 动态插入部门
      * @param dept
+     *
+     * @SelectKey 注解的主要作用就是把当前插入对象的主键值，赋值给对应的id属性(id代表对应的主键)
      */
     @InsertProvider(type = DeptDynaSqlProvider.class, method = "insertDept")
-    void save(Dept dept);
+    @SelectKey(statement = "SELECT LAST_INSERT_ID() AS id", keyProperty = "id", keyColumn = "id", before = false, resultType = Integer.class)
+    Integer save(Dept dept);
 
     /**
-     *
+     * 更新某个部门的信息
      * @param dept
      */
     @UpdateProvider(type = DeptDynaSqlProvider.class, method = "updateDept")
-    void update(Dept dept);
+    Integer update(Dept dept);
 }

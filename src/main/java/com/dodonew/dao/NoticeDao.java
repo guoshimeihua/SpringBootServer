@@ -18,7 +18,7 @@ public interface NoticeDao {
             @Result(column = "title", property = "title"),
             @Result(column = "content", property = "content"),
             @Result(column = "createdate", property = "createDate"),
-            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.hrm.dao.UserDao.selectById", fetchType = FetchType.EAGER))
+            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.dao.UserDao.selectById", fetchType = FetchType.EAGER))
     })
     List<Notice> selectByPage(Map<String, Object> params);
 
@@ -31,16 +31,17 @@ public interface NoticeDao {
             @Result(column = "title", property = "title"),
             @Result(column = "content", property = "content"),
             @Result(column = "createdate", property = "createDate"),
-            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.hrm.dao.UserDao.selectById", fetchType = FetchType.EAGER))
+            @Result(column = "user_id", property = "user", one = @One(select = "com.dodonew.dao.UserDao.selectById", fetchType = FetchType.EAGER))
     })
     Notice selectNoticeById(Integer id);
 
     @Delete("delete from " + HrmConstants.NOTICETABLE + " where id = #{id}")
-    void deleteById(Integer id);
+    Integer deleteById(Integer id);
 
     @InsertProvider(type = NoticeDynaSqlProvider.class, method = "insertNotice")
-    void save(Notice notice);
+    @SelectKey(statement = "SELECT LAST_INSERT_ID() AS id", keyProperty = "id", keyColumn = "id", before = false, resultType = Integer.class)
+    Integer save(Notice notice);
 
     @UpdateProvider(type = NoticeDynaSqlProvider.class, method = "updateNotice")
-    void update(Notice notice);
+    Integer update(Notice notice);
 }

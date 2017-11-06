@@ -1,6 +1,8 @@
 package com.dodonew.interceptor;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dodonew.annotation.DataValidate;
 import com.dodonew.handler.RequestHandler;
 import com.dodonew.util.common.BootConstants;
@@ -29,6 +31,10 @@ public class DataSecurityInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.info("在请求处理前进行调用");
+        if ("/hrm/api/documents/download".equals(request.getRequestURI())) {
+            // 处理图片下载请求
+            return super.preHandle(request, response, handler);
+        }
 
         // AES加解密
         RequestHandler requestHandler = new RequestHandler(request);
@@ -46,7 +52,8 @@ public class DataSecurityInterceptor extends HandlerInterceptorAdapter {
             JSONObject responseJson = new JSONObject();
             responseJson.put(BootConstants.CODE_KEY, StatusCode.ERROR_TIMEOUT);
             responseJson.put(BootConstants.MESSAGE_KEY, "请求时间不合法");
-            String responseStr = AESUtil.encrypt(responseJson.toString(), BootConstants.AES_KEY, BootConstants.AES_IV);
+            String jsonStr = JSON.toJSONString(responseJson, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
+            String responseStr = AESUtil.encrypt(jsonStr, BootConstants.AES_KEY, BootConstants.AES_IV);
             response.getWriter().write(responseStr);
             return false;
         }
@@ -63,7 +70,8 @@ public class DataSecurityInterceptor extends HandlerInterceptorAdapter {
             JSONObject responseJson = new JSONObject();
             responseJson.put(BootConstants.CODE_KEY, StatusCode.ERROR_SIGN_INVALIDATE);
             responseJson.put(BootConstants.MESSAGE_KEY, "数据签名校验失败");
-            String responseStr = AESUtil.encrypt(responseJson.toString(), BootConstants.AES_KEY, BootConstants.AES_IV);
+            String jsonStr = JSON.toJSONString(responseJson, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
+            String responseStr = AESUtil.encrypt(jsonStr, BootConstants.AES_KEY, BootConstants.AES_IV);
             response.getWriter().write(responseStr);
             return false;
         }
@@ -95,7 +103,8 @@ public class DataSecurityInterceptor extends HandlerInterceptorAdapter {
                         JSONObject responseJson = new JSONObject();
                         responseJson.put(BootConstants.CODE_KEY, StatusCode.ERROR_REQUIREDPARAMS_LOST);
                         responseJson.put(BootConstants.MESSAGE_KEY, msg);
-                        String responseStr = AESUtil.encrypt(responseJson.toString(), BootConstants.AES_KEY, BootConstants.AES_IV);
+                        String jsonStr = JSON.toJSONString(responseJson, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
+                        String responseStr = AESUtil.encrypt(jsonStr, BootConstants.AES_KEY, BootConstants.AES_IV);
                         response.getWriter().write(responseStr);
                         return false;
                     }
@@ -110,14 +119,20 @@ public class DataSecurityInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         logger.info("在请求处理后进行调用");
-        JSONObject responseJson = (JSONObject) request.getAttribute(BootConstants.REQUESTAFTERDATA);
-        if (responseJson.isEmpty()) {
-            responseJson = new JSONObject();
-            responseJson.put(BootConstants.CODE_KEY, StatusCode.ERROR_DATA_EMPTY);
-            responseJson.put(BootConstants.MESSAGE_KEY, "数据为空");
+        if ("/hrm/api/documents/download".equals(request.getRequestURI())) {
+            // 处理图片下载请求
+            super.afterCompletion(request, response, handler, ex);
+        } else {
+            JSONObject responseJson = (JSONObject) request.getAttribute(BootConstants.REQUESTAFTERDATA);
+            if (responseJson.isEmpty()) {
+                responseJson = new JSONObject();
+                responseJson.put(BootConstants.CODE_KEY, StatusCode.ERROR_DATA_EMPTY);
+                responseJson.put(BootConstants.MESSAGE_KEY, "数据为空");
+            }
+            String jsonString = JSONObject.toJSONString(responseJson, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
+            String responseStr = AESUtil.encrypt(jsonString, BootConstants.AES_KEY, BootConstants.AES_IV);
+            response.getWriter().write(responseStr);
+            super.afterCompletion(request, response, handler, ex);
         }
-        String responseStr = AESUtil.encrypt(responseJson.toString(), BootConstants.AES_KEY, BootConstants.AES_IV);
-        response.getWriter().write(responseStr);
-        super.afterCompletion(request, response, handler, ex);
     }
 }
