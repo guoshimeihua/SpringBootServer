@@ -8,6 +8,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Created by Bruce on 2017/10/31.
@@ -17,6 +20,30 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class DeptServiceTests {
     @Autowired
     private DeptService deptService;
+
+    @Test
+    public void testDeptList() {
+        List<Dept> deptList = deptService.findDeptList(1, 10);
+        System.out.println("测试部门列表 : " + deptList);
+        Assert.assertTrue(deptList.size() > 0);
+    }
+
+    @Test
+    public void testAddDept() {
+        Dept dept = new Dept("测试部1", "测试部1");
+        boolean isSuccess = deptService.addDept(dept);
+        System.out.println("增加部门的主键id：" + dept.getId());
+        Assert.assertEquals(true, isSuccess);
+    }
+
+    @Test
+    @Transactional
+    public void testAddDept2() {
+        Dept dept = new Dept("测试部2", "测试部2");
+        boolean isSuccess = deptService.addDept(dept);
+        System.out.println("增加部门的主键id: " + dept.getId());
+        Assert.assertEquals(true, isSuccess);
+    }
 
     @Test
     public void testUpdateDeptSuccess() {
