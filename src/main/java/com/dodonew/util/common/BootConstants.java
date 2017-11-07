@@ -4,9 +4,10 @@ package com.dodonew.util.common;
  * Created by Bruce on 2017/10/16.
  */
 public class BootConstants {
-    public static final String AES_KEY = "!@*%$65102933ddn";
-    public static final String AES_IV = "!@*%$32028092ddn";
-    public static final String SIGN_KEY = "sdlkjsdljf0j2fsjk";
+    // AES_KEY AES_IV SIGN_KEY这些都是你要自定义的值
+    public static final String AES_KEY = "填写你的AES_KEY";
+    public static final String AES_IV = "填写你的AES_IV";
+    public static final String SIGN_KEY = "填写你的SIGN_KEY";
 
     public static final String CODE_KEY = "code";
     public static final String DATA_KEY = "data";
